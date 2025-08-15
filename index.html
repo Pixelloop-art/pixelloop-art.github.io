@@ -62,12 +62,35 @@
   <h1>🎮 PixelLoop</h1>
   <p>Welcome to PixelLoop — a growing collection of fun, free online games and tools. Pick one and start playing!</p>
 
-  <div class="projects">
-    <div class="card">
-      <a href="Pixelsnake/">🐍 Play Neon Snake</a>
-    </div>
-    <!-- Add more project links here when you create them -->
+  <div class="projects" id="project-list">
+    <p>Loading projects...</p>
   </div>
+
+  <script>
+    const username = "pixelloop-art"; // your GitHub username
+    const rootRepo = `${username}.github.io`;
+
+    fetch(`https://api.github.com/users/${username}/repos`)
+      .then(res => res.json())
+      .then(repos => {
+        const container = document.getElementById("project-list");
+        container.innerHTML = "";
+        repos
+          .filter(repo => repo.name !== rootRepo)
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+          .forEach(repo => {
+            const projectURL = `https://${username}.github.io/${repo.name}/`;
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `<a href="${projectURL}" target="_blank">▶ ${repo.name.replace(/-/g, " ")}</a>`;
+            container.appendChild(card);
+          });
+      })
+      .catch(err => {
+        document.getElementById("project-list").innerHTML = "<p>Failed to load projects.</p>";
+        console.error(err);
+      });
+  </script>
 
 </body>
 </html>
